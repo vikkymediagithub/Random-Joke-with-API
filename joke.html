@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Random Joke</title>
+ <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-pink-100 via-purple-100 to-indigo-100 min-h-screen flex items-center justify-center">
+ <!-- card -->
+  <div id="jokeCard" class="bg-white rounded-2xl shadow-xl p-8 max-w-md text-center transition-transform duration-500 transform scale-95 opacity">
+   <h1 class="text-3xl font-semibold">Random Joke Generator</h1>
+    <p id="setup" class="text-lg text-gray-700 min-h-[60px]"></p>
+    <p id="punchline" class="text-xl font-semibold text-blue-600 mt-4 opacity-0 transition-opacity duration-700"></p>
+
+    <button type="submit" id="getJokeBtn" class="mt-6 bg-pink-500 text-white px-6 py-3 rounded-xl hover:bg-pink-500 transition-all duration-300">Get a joke</button>
+
+    <div class="mt-6 text-gray-600">laugh counter: <span id="laughCount" class="font-semibold text-pink-600">0</span></div>
+  </div>
+
+  <!-- Script -->
+   <script>
+    const getJokeBtn = document.getElementById('getJokeBtn');
+    const setupEl = document.getElementById('setup');
+    const punchlineEl = document.getElementById('punchline');
+    const laughCountEl = document.getElementById('laughCount');
+    const jokeCard = document.getElementById('jokeCard');
+
+    let laughCount = 0;
+
+    async function fetchJoke(){
+      const response = await fetch('https://official-joke-api.appspot.com/random_joke');
+      const joke = await response.json();
+      return joke;
+    }
+
+    getJokeBtn.addEventListener("click", async () => {
+      // Reset punchline visibility
+      punchlineEl.classList.remove('opacity-100');
+      punchlineEl.classList.add('opacity-0');
+      punchlineEl.textContent = '';
+
+      const joke = await fetchJoke();
+
+      // display setup first
+      setupEl.textContent = joke.setup;
+
+      // reveal punchline after a delay
+      setTimeout(() => {
+       punchlineEl.textContent = joke.punchline;
+       punchlineEl.classList.remove('opacity-0');
+
+       // increment laugh counter
+       laughCount++;
+       laughCountEl.textContent = laughCount;
+
+       // animate for card
+       jokeCard.classList.add('scale-105');
+       setTimeout(() => {
+        jokeCard.classList.remove('scale-105');
+       }, 300);
+      })
+    });
+   </script>
+</body>
+</html>
